@@ -1,0 +1,110 @@
+QUERY RESULTS: atfm.db
+Run on 2026-09-16 by Gilroy Joseph
+Source: EUROCONTROL PRU, Airport Arrival ATFM Delay (APT-DLY), downloaded 16 Sep 2026
+Every figure published on the accompanying page is reproduced below.
+==============================================================================
+
+Q0.  INTEGRITY CHECK. Run this first, before trusting anything else.
+------------------------------------------------------------------------------
+  total_column  sum_of_causes  difference
+  ------------  -------------  ----------
+  7409233.0     7409233.0      0.0       
+  (1 rows)
+
+Q1.  THE RANKING  (page 03, and the appendix table)
+------------------------------------------------------------------------------
+  airport                  arrivals  min_per_landing  pct_over_15_min
+  -----------------------  --------  ---------------  ---------------
+  Amsterdam - Schiphol     137318    3.03             4.9            
+  Zürich                   79460     2.54             5.9            
+  Copenhagen - Kastrup     78171     1.04             2.3            
+  London - Heathrow        136457    0.99             2.3            
+  Paris-Charles-de-Gaulle  137876    0.88             1.8            
+  Brussels                 57991     0.73             1.4            
+  Frankfurt                126082    0.69             1.5            
+  Munich                   88489     0.51             0.9            
+  Madrid - Barajas         130443    0.4              0.9            
+  Rome - Fiumicino         93526     0.06             0.1            
+  (10 rows)
+
+Q2.  CAUSE BREAKDOWN, SCHIPHOL AGAINST THE PEER MEDIAN  (page 05)
+------------------------------------------------------------------------------
+  cause_name                   cause_group           schiphol  peer_median  gap   
+  ---------------------------  --------------------  --------  -----------  ------
+  Weather                      AD Weather            1.702     0.448        1.254 
+  Aerodrome Capacity           AD Capacity           1.287     0.112        1.175 
+  Equipment (ATC)              AD Disruptions (ATC)  0.023     0.007        0.016 
+  Other                        AD Disruptions        0.011     0.001        0.011 
+  ATC Capacity                 AD Capacity (ATC)     0.005     0.033        -0.028
+  ATC Staffing                 AD Staffing (ATC)     0.0       0.016        -0.016
+  Industrial Action (ATC)      AD Disruptions (ATC)  0.0       0.0          0.0   
+  Military Activity            AD Capacity           0.0       0.0          0.0   
+  ATC Routeing                 AD Capacity           0.0       0.0          0.0   
+  Environmental Issues         AD Capacity           0.0       0.0          0.0   
+  Accident/Incident            AD Disruptions        0.0       0.0          0.0   
+  Aerodrome Services           AD Disruptions        0.0       0.0          0.0   
+  Industrial Action (non-ATC)  AD Disruptions        0.0       0.0          0.0   
+  Not regulated/Not specified  AD Disruptions        0.0       0.0          0.0   
+  Special Event                AD Events             0.0       0.0          0.0   
+  De-icing                     AD Weather            0.0       0.0          0.0   
+  (16 rows)
+
+Q3.  AERODROME CAPACITY, EIGHT YEARS  (page 06)
+------------------------------------------------------------------------------
+  yr    schiphol  zurich  worst_airport         worst_value
+  ----  --------  ------  --------------------  -----------
+  2019  1.53      0.53    Amsterdam - Schiphol  1.53       
+  2020  0.19      0.14    Amsterdam - Schiphol  0.19       
+  2021  0.01      0.03    Zürich                0.03       
+  2022  1.74      0.12    Amsterdam - Schiphol  1.74       
+  2023  0.38      0.22    Frankfurt             1.14       
+  2024  2.07      0.5     Amsterdam - Schiphol  2.07       
+  2025  2.46      0.45    Amsterdam - Schiphol  2.46       
+  2026  1.29      0.41    Amsterdam - Schiphol  1.29       
+  (8 rows)
+
+Q4.  IS IT A FEW BAD DAYS?  (page 07)
+------------------------------------------------------------------------------
+  airport                  pct_from_worst_10_days  pct_from_worst_30_days
+  -----------------------  ----------------------  ----------------------
+  Zürich                   21.0                    44.0                  
+  Amsterdam - Schiphol     31.0                    52.0                  
+  London - Heathrow        31.0                    58.0                  
+  Brussels                 33.0                    53.0                  
+  Paris-Charles-de-Gaulle  40.0                    61.0                  
+  Frankfurt                46.0                    79.0                  
+  Copenhagen - Kastrup     50.0                    77.0                  
+  Madrid - Barajas         59.0                    83.0                  
+  Munich                   70.0                    95.0                  
+  Rome - Fiumicino         100.0                   100.0                 
+  (10 rows)
+
+Q5.  WEATHER REMOVED  (page 04, and the appendix)
+------------------------------------------------------------------------------
+  airport                  all_causes  weather  non_weather
+  -----------------------  ----------  -------  -----------
+  Zürich                   2.541       0.806    1.735      
+  Amsterdam - Schiphol     3.029       1.702    1.326      
+  Brussels                 0.727       0.207    0.52       
+  Paris-Charles-de-Gaulle  0.878       0.444    0.434      
+  Copenhagen - Kastrup     1.038       0.7      0.339      
+  London - Heathrow        0.993       0.678    0.315      
+  Madrid - Barajas         0.401       0.301    0.101      
+  Munich                   0.507       0.448    0.059      
+  Frankfurt                0.689       0.639    0.05       
+  Rome - Fiumicino         0.057       0.056    0.001      
+  (10 rows)
+
+Q6.  WHY ZURICH DOES NOT OVERTURN THE FINDING  (page 04)
+------------------------------------------------------------------------------
+  cause_name            min_per_landing
+  --------------------  ---------------
+  Other                 1.248          
+  Weather               0.806          
+  Aerodrome Capacity    0.414          
+  Environmental Issues  0.022          
+  Equipment (ATC)       0.018          
+  ATC Staffing          0.016          
+  Aerodrome Services    0.012          
+  ATC Capacity          0.004          
+  (8 rows)

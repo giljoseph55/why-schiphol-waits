@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Why Schiphol waits: arrival ATFM delay against nine European hubs</title>
+<meta name="description" content="1,033,177 daily airport records from EUROCONTROL, January 2019 to July 2026.">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
+<style>
+  :root{
+    color-scheme:light;
+    --paper:#FFFFFF; --wash:#F5F5F5;
+    --ink:#1A1D21; --body:#4D4D4D; --mut:#6B6B6B; --faint:#A6A6A6;
+    --rule:#DDDDDD; --rule-soft:#EDEDED; --track:#EFEFEF;
+    --acc:#1F5673;          /* Schiphol, the subject */
+    --acc-soft:#E3ECF1;
+    --s1:8px; --s2:16px; --s3:24px; --s4:32px; --s5:48px; --s6:64px; --s7:96px;
+    --pad-x:clamp(24px,5vw,48px); --nav-h:72px; --measure:640px;
+    --t-body:17px; --lh-body:28px; --t-sec:15px; --lh-sec:24px;
+    --t-cap:13px; --lh-cap:20px; --t-micro:11px;
+    --geo:"Jost",Futura,"Century Gothic",sans-serif;
+    --sans:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;overflow:hidden}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--body);font-family:var(--sans);
+    font-size:var(--t-body);line-height:var(--lh-body);font-feature-settings:"tnum" 1;
+    -webkit-font-smoothing:antialiased;overscroll-behavior:none;touch-action:pan-y}
+
+  #deck{position:fixed;inset:0;overflow:hidden}
+  .page{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:calc(var(--s6) + env(safe-area-inset-top)) var(--pad-x)
+            calc(var(--nav-h) + env(safe-area-inset-bottom) + var(--s4))}
+  .page.cover{padding-top:calc(var(--s7) + env(safe-area-inset-top))}
+  .page.on{display:flex;animation:in .34s cubic-bezier(.22,.61,.36,1)}
+  @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .inner{margin:auto;width:100%;max-width:var(--measure);display:flex;flex-direction:column;gap:var(--s3)}
+  .inner > h2{margin-bottom:var(--s1)}
+  .prose{display:flex;flex-direction:column;gap:var(--s2)}
+  figure{margin:0;display:flex;flex-direction:column;gap:var(--s1)}
+  .folio{position:absolute;top:calc(var(--s4) + env(safe-area-inset-top));left:var(--pad-x);
+    font-size:var(--t-micro);letter-spacing:.2em;color:var(--faint);font-weight:700}
+
+  #nav{position:fixed;left:0;right:0;bottom:0;height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+    padding-bottom:env(safe-area-inset-bottom);display:flex;align-items:center;justify-content:center;
+    gap:var(--s3);background:linear-gradient(to top,var(--paper) 58%,rgba(255,255,255,0));z-index:20}
+  #nav button{width:48px;height:48px;border-radius:0;padding:0;cursor:pointer;
+    border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    transition:background .18s,border-color .18s,opacity .18s;-webkit-tap-highlight-color:transparent}
+  #nav button:hover:not(:disabled),#nav button:focus-visible{background:var(--acc-soft);border-color:var(--acc)}
+  #nav button:disabled{opacity:.22;cursor:default}
+  #nav svg{width:16px;height:16px}
+  #count{font-size:var(--t-micro);font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--mut);min-width:72px;text-align:center;font-variant-numeric:tabular-nums;transition:opacity .24s}
+  #count b{color:var(--ink);font-weight:700}
+  #count.hide{opacity:0;pointer-events:none}
+
+  .display{font-family:var(--geo);font-weight:500;text-transform:uppercase;
+    font-size:clamp(32px,min(7.4vw,7.4vh),50px);line-height:1.08;letter-spacing:.005em;
+    color:var(--ink);margin:0}
+  h2{font-family:var(--geo);font-weight:500;text-transform:uppercase;
+    font-size:clamp(24px,min(5.2vw,5.2vh),34px);line-height:1.10;letter-spacing:.008em;
+    color:var(--ink);margin:0}
+  h3{font-family:var(--sans);font-size:var(--t-micro);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--mut);font-weight:700;margin:0}
+  p{margin:0;max-width:62ch}
+  .lead{font-family:var(--geo);font-weight:400;font-size:clamp(23px,min(5.4vw,5.4vh),32px);
+    line-height:1.22;color:var(--ink);max-width:26ch}
+  .big{font-family:var(--geo);font-weight:300;font-size:clamp(21px,min(5vw,5vh),28px);
+    line-height:1.32;color:var(--ink);max-width:28ch}
+  .small{font-size:var(--t-cap);line-height:var(--lh-cap);color:var(--mut);max-width:66ch}
+  .sec{font-size:var(--t-sec);line-height:var(--lh-sec)}
+  strong{font-weight:600;color:var(--ink)}
+  .kicker{font-family:var(--sans);font-size:var(--t-micro);letter-spacing:.27em;
+    text-transform:uppercase;color:var(--mut);font-weight:700}
+  .sub{font-family:var(--geo);font-weight:300;font-size:var(--t-body);line-height:1.5;
+    max-width:40ch;color:var(--body)}
+  .by{padding-top:var(--s3);border-top:1px solid var(--rule);font-size:var(--t-sec);
+    line-height:var(--lh-sec);color:var(--mut)}
+  .bridge .q{font-family:var(--geo);font-weight:300;font-size:clamp(23px,min(5.4vw,5.4vh),32px);
+    line-height:1.28;color:var(--ink);max-width:24ch}
+  .bridge .rule{width:72px;height:6px;background:var(--acc)}
+
+  .chart{display:flex;flex-direction:column}
+  .row{padding:var(--s1) 0;border-bottom:1px solid var(--rule-soft)}
+  .row:last-child{border-bottom:none}
+  .row .top{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s2);margin-bottom:6px}
+  .row .nm{font-size:var(--t-sec);color:var(--ink)}
+  .row .nm.me{font-weight:700}
+  .row .vl{font-family:var(--geo);font-size:var(--t-body);font-weight:500;color:var(--mut);flex:0 0 auto}
+  .row .vl.me{color:var(--acc)}
+  .track{height:10px;background:var(--track);position:relative}
+  .fill{height:10px;background:#C9CDD1}
+  .fill.me{background:var(--acc)}
+  figcaption{font-size:var(--t-cap);line-height:var(--lh-cap);color:var(--mut);max-width:64ch}
+
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 calc(-1 * var(--pad-x));padding:0 var(--pad-x)}
+  table{border-collapse:collapse;font-size:var(--t-sec);white-space:nowrap;min-width:100%}
+  th,td{padding:var(--s2) var(--s1);text-align:right;border-bottom:1px solid var(--rule-soft)}
+  th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--paper)}
+  th{font-family:var(--sans);font-size:var(--t-micro);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--mut);font-weight:700;border-bottom-color:var(--rule)}
+  td.n{font-family:var(--geo);font-size:var(--t-body);font-weight:500;color:var(--ink)}
+  tr.me td{background:var(--acc-soft)}
+  tr.me td:first-child{background:var(--acc-soft);font-weight:700;color:var(--ink)}
+  tr.me td.n{color:var(--acc)}
+
+  .pairs{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+  .pair{padding:var(--s2) 0;border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:var(--s1)}
+  .pair b{font-family:var(--sans);font-size:var(--t-micro);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink);font-weight:700}
+  .pair span{font-size:var(--t-sec);line-height:var(--lh-sec)}
+
+  .qns{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+  .qn{border-bottom:1px solid var(--rule);padding:var(--s3) 0;display:flex;gap:var(--s2)}
+  .qn .i{font-family:var(--geo);font-size:var(--t-body);font-weight:500;color:var(--acc);
+    line-height:var(--lh-body);flex:0 0 16px}
+  .try{background:var(--wash);padding:var(--s3);display:flex;flex-direction:column;gap:var(--s2);
+    border-left:6px solid var(--acc)}
+  .concede{border-left:2px solid var(--ink);padding-left:var(--s3);display:flex;flex-direction:column;gap:var(--s2)}
+
+  a{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--acc);word-break:break-word}
+  a:hover,a:focus-visible{background:var(--acc-soft)}
+  details{background:var(--wash);border-left:6px solid var(--acc)}
+  summary{cursor:pointer;padding:var(--s2);font-family:var(--sans);font-size:var(--t-micro);
+    font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:" ↓";opacity:.55}
+  details[open] summary{border-bottom:1px solid var(--rule)}
+  details[open] summary::after{content:" ↑"}
+  .dt{padding:var(--s3) var(--s2);display:flex;flex-direction:column;gap:var(--s2)}
+  .dt p{font-size:var(--t-sec);line-height:var(--lh-sec);color:var(--mut)}
+  .dt p strong{color:var(--ink)}
+  .dt th:first-child,.dt td:first-child{background:var(--wash)}
+  .dt .scroll{margin:0 calc(-1 * var(--s2));padding:0 var(--s2)}
+
+  footer{display:flex;flex-direction:column;gap:var(--s2)}
+  footer .nm{font-family:var(--geo);font-weight:500;text-transform:uppercase;
+    font-size:clamp(24px,5.2vw,32px);color:var(--ink);line-height:1.10;letter-spacing:.01em}
+  footer .rl{font-size:var(--t-sec);line-height:var(--lh-sec);color:var(--mut);
+    padding-bottom:var(--s1);border-bottom:1px solid var(--rule)}
+  footer p{font-size:var(--t-sec);line-height:var(--lh-sec)}
+
+  @media (max-height:680px){ :root{--nav-h:64px} .page,.page.cover{padding-top:var(--s5)} }
+  @media (orientation:landscape) and (max-height:520px){
+    :root{--nav-h:56px} .page,.page.cover{padding-top:var(--s4)}
+    .folio{top:var(--s2)} #nav button{width:40px;height:40px} .inner{gap:var(--s2)} }
+  @media (prefers-reduced-motion:reduce){ .page.on{animation:none} }
+</style>
+<noscript><style>
+  html,body{overflow:auto !important;height:auto !important}
+  #deck{position:static !important}
+  .page{position:static !important;display:flex !important;min-height:100dvh;
+    border-bottom:1px solid var(--rule);padding-bottom:var(--s7) !important}
+  #nav{display:none !important}
+</style></noscript>
+</head>
+<body>
+<div id="deck">
+
+<!-- COVER -->
+<section class="page cover"><div class="inner">
+  <div class="kicker">EUROCONTROL open performance data</div>
+  <h1 class="display">Why Schiphol waits</h1>
+  <p class="sub">Arrival flow-management delay at Amsterdam Schiphol, against nine comparable
+  European hubs. 1,033,177 daily airport records, January 2019 to July 2026.</p>
+  <div class="by"><strong>Gilroy Joseph</strong> · September 2026<br>
+  <span class="small">EUROCONTROL figures as downloaded on 16 September 2026.</span></div>
+</div></section>
+
+<!-- FINDING -->
+<section class="page"><div class="inner">
+  <h3>What I found</h3>
+  <p class="lead">Schiphol carries 3.03 minutes of arrival flow-management delay per landing.
+  The median of nine comparable European hubs is 0.73.</p>
+  <p>Weather is the largest single part of it, and Schiphol has the worst weather delay of the
+  ten. But weather is not what separates it.</p>
+  <p class="small">Everything after this is how I got there, and the two places where my own
+  argument gives way.</p>
+</div></section>
+
+<!-- 01 -->
+<section class="page"><div class="folio">01</div><div class="inner">
+  <h2>Where this comes from</h2>
+  <p>EUROCONTROL's Performance Review Unit publishes one row per airport per day: arrivals
+  flown, delay minutes assigned, and those minutes split across sixteen official cause codes.
+  It runs from January 2019 to 31 July 2026.</p>
+  <h3>Two things this number is not</h3>
+  <div class="pairs">
+    <div class="pair"><b>Not total delay</b><span>Flow-management delay is assigned before
+    departure, because the destination cannot accept the flight on time. Crew, baggage,
+    boarding and turnaround delays are not in this dataset at all.</span></div>
+    <div class="pair"><b>Not the airline's number</b><span>This is measured at the airport, so
+    it covers every carrier landing there, not KLM alone.</span></div>
+  </div>
+  <p class="sec">January to July only, every year. The 2026 data stops on 31 July, so comparing
+  it against full calendar years would have flattered it. Same seven months throughout.</p>
+  <p class="small">Integrity check before anything else: the sixteen cause columns sum to the
+  reported total exactly, 7,409,233 minutes against 7,409,233 for 2025. No residue, no
+  unallocated remainder.</p>
+</div></section>
+
+<!-- 02 -->
+<section class="page"><div class="folio">02</div><div class="inner">
+  <h2>Why these nine</h2>
+  <p>Large Western European hubs built around a dominant network carrier: Heathrow, Paris CDG,
+  Frankfurt, Munich, Zürich, Madrid, Copenhagen, Brussels, Rome Fiumicino.</p>
+  <p class="sec">Istanbul is the only European airport handling more arrivals than Schiphol, and
+  it is excluded: it sits outside the EU regulatory regime, so its capacity constraints are set
+  differently. Barcelona and Gatwick are excluded as point-to-point operations rather than
+  connecting hubs.</p>
+  <p>Schiphol took <strong>137,318</strong> IFR arrivals in the window. Paris CDG took 137,876
+  and Heathrow 136,457, so the three largest sit within one percent of each other.</p>
+</div></section>
+
+<!-- bridge -->
+<section class="page bridge"><div class="inner">
+  <div class="rule"></div>
+  <div class="q">A ranking is not a diagnosis. But it is where you have to start.</div>
+</div></section>
+
+<!-- 03 -->
+<section class="page"><div class="folio">03</div><div class="inner">
+  <h2>The ranking</h2>
+  <figure>
+    <h3>Minutes of arrival ATFM delay per landing · 2026, January to July</h3>
+    <div class="chart">
+      <div class="row"><div class="top"><span class="nm me">Amsterdam Schiphol</span><span class="vl me">3.03</span></div><div class="track"><div class="fill me" style="width:94.7%"></div></div></div>
+      <div class="row"><div class="top"><span class="nm">Zürich</span><span class="vl">2.54</span></div><div class="track"><div class="fill" style="width:79.4%"></div></div></div>
+      <div class="row"><div class="top"><span class="nm">Copenhagen</span><span class="vl">1.04</span></div><div class="track"><div class="fill" style="width:32.5%"></div></div></div>
+      <div class="row"><div class="top"><span class="nm">London Heathrow</span><span class="vl">0.99</span></div><div class="track"><div class="fill" style="width:30.9%"></div></div></div>
+      <div class="row"><div class="top"><span class="nm">Paris CDG</span><span class="vl">0.88</span></div><div class="track"><div class="fill" style="width:27.5%"></div></div></div>
+      <div class="row"><div class="top"><span class="nm">Brussels</span><span class="vl">0.73</span></div><div class="track"><div class="fill" style="width:22.8%"></div></div></div>
+      <div class="row"><div class="top"><span class="nm">Frankfurt</span><span class="vl">0.69</span></div><div class="track"><div class="fill" style="width:21.6%"></div></div></div>
+      <div class="row"><div class="top"><span class="nm">Munich</span><span class="vl">0.51</span></div><div class="track"><div class="fill" style="width:15.9%"></div></div></div>
+      <div class="row"><div class="top"><span class="nm">Madrid</span><span class="vl">0.40</span></div><div class="track"><div class="fill" style="width:12.5%"></div></div></div>
+      <div class="row"><div class="top"><span class="nm">Rome Fiumicino</span><span class="vl">0.06</span></div><div class="track"><div class="fill" style="width:1.9%"></div></div></div>
+    </div>
+    <figcaption>Per landing, so size is taken out of it. Schiphol is 4.2 times the median of
+    the other nine.</figcaption>
+  </figure>
+  <p>On the second measure Schiphol is second, not first. <strong>4.9%</strong> of its arrivals
+  took more than fifteen minutes of flow-management delay, behind Zürich at 5.9%, and ahead of
+  Heathrow and Copenhagen at 2.3%, Paris at 1.8% and Frankfurt at 1.5%.</p>
+</div></section>
+
+<!-- bridge -->
+<section class="page bridge"><div class="inner">
+  <div class="rule"></div>
+  <div class="q">The obvious answer is weather. A coastal airport, crosswinds, six runways.</div>
+</div></section>
+
+<!-- 04 -->
+<section class="page"><div class="folio">04</div><div class="inner">
+  <h2>Where my argument gives way</h2>
+  <div class="concede">
+    <p>Weather is the largest single cause at Schiphol, at <strong>1.70</strong> minutes per
+    landing, and Schiphol is the worst of the ten on it. That is real and I am not going to
+    argue it away.</p>
+    <p>And if you take weather out entirely, Schiphol is <strong>not</strong> the worst. Zürich
+    is, at 1.735 non-weather minutes per landing against Schiphol's 1.326.</p>
+  </div>
+  <div class="prose">
+    <p>So the simple version of this story does not survive. Here is the version that does.</p>
+    <p class="sec">Zürich's non-weather delay is <strong>1.248</strong> minutes in the code
+    marked <em>Other</em>, an unclassified bucket. Schiphol's sits in a code with a name.</p>
+  </div>
+</div></section>
+
+<!-- 05 -->
+<section class="page"><div class="folio">05</div><div class="inner">
+  <h2>The named cause</h2>
+  <figure>
+    <div class="scroll"><table>
+      <thead><tr><th>Official cause code</th><th>Schiphol</th><th>Median of 9</th></tr></thead>
+      <tbody>
+        <tr><td>Weather</td><td class="n">1.702</td><td>0.448</td></tr>
+        <tr class="me"><td>Aerodrome Capacity</td><td class="n">1.287</td><td>0.112</td></tr>
+        <tr><td>Equipment (ATC)</td><td class="n">0.023</td><td>0.007</td></tr>
+        <tr><td>Other</td><td class="n">0.011</td><td>0.001</td></tr>
+        <tr><td>ATC Capacity</td><td class="n">0.005</td><td>0.033</td></tr>
+        <tr><td>ATC Staffing</td><td class="n">0.000</td><td>0.016</td></tr>
+      </tbody>
+    </table></div>
+    <figcaption>Minutes per landing, 2026 January to July. Median of the nine, not a mean, so a
+    single outlier cannot move the comparison. Codes below 0.002 at both are omitted here and
+    listed in full at the end.</figcaption>
+  </figure>
+  <div class="prose">
+    <p>Aerodrome Capacity is <strong>11.5 times</strong> the peer median. It is the airport's own
+    declared ability to accept arrivals, and it is the one line where Schiphol stands apart.</p>
+    <p>Air traffic control is not the problem. On ATC Capacity and ATC Staffing, Schiphol is
+    <strong>better</strong> than the peer median, and on staffing it recorded zero.</p>
+  </div>
+</div></section>
+
+<!-- bridge -->
+<section class="page bridge"><div class="inner">
+  <div class="rule"></div>
+  <div class="q">One year proves nothing. Eight might.</div>
+</div></section>
+
+<!-- 06 -->
+<section class="page"><div class="folio">06</div><div class="inner">
+  <h2>Eight years</h2>
+  <figure>
+    <h3>Aerodrome Capacity delay, minutes per landing, January to July</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Year</th><th>Schiphol</th><th>Median of 9</th><th>Zürich</th></tr></thead>
+      <tbody>
+        <tr><td>2019</td><td class="n">1.53</td><td>0.03</td><td>0.53</td></tr>
+        <tr><td>2020</td><td class="n">0.19</td><td>0.00</td><td>0.14</td></tr>
+        <tr><td>2021</td><td class="n">0.01</td><td>0.00</td><td>0.03</td></tr>
+        <tr><td>2022</td><td class="n">1.74</td><td>0.00</td><td>0.12</td></tr>
+        <tr><td>2023</td><td class="n">0.38</td><td>0.05</td><td>0.22</td></tr>
+        <tr><td>2024</td><td class="n">2.07</td><td>0.02</td><td>0.50</td></tr>
+        <tr><td>2025</td><td class="n">2.46</td><td>0.04</td><td>0.45</td></tr>
+        <tr><td>2026</td><td class="n">1.29</td><td>0.11</td><td>0.41</td></tr>
+      </tbody>
+    </table></div>
+    <figcaption>Schiphol is highest in six of the eight years. Zürich was higher in 2021, when
+    traffic across the whole set was still at pandemic levels, and Frankfurt in 2023 at 1.14.
+    Both of those are single years; Schiphol's is the standing position.</figcaption>
+  </figure>
+  <p>It predates the pandemic, it survived the pandemic, and it came back larger than it
+  started. This is not a recent operational wobble.</p>
+</div></section>
+
+<!-- 07 -->
+<section class="page"><div class="folio">07</div><div class="inner">
+  <h2>Not a handful of bad days</h2>
+  <p class="big">The ten worst days account for 31% of Schiphol's delay minutes. At Munich it
+  is 70%, at Madrid 59%, at Rome 100%.</p>
+  <p>A high concentration means a few storms. A low one means most days contribute. Schiphol
+  sits at the low end of this set, alongside Zürich at 21% and Heathrow at 31%.</p>
+  <p class="sec">That is the difference between an airport that gets hit occasionally and one
+  that is running close to its ceiling most of the time.</p>
+</div></section>
+
+<!-- 08 -->
+<section class="page"><div class="folio">08</div><div class="inner">
+  <h2>What it costs</h2>
+  <figure>
+    <h3>Arrival ATFM delay at Schiphol, priced at EUROCONTROL's own figure</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>January to July 2026</th><th>Minutes</th><th>At €100 / min</th></tr></thead>
+      <tbody>
+        <tr><td>Delay actually carried</td><td class="n">415,893</td><td class="n">€41.6m</td></tr>
+        <tr><td>If it matched the peer median</td><td class="n">99,829</td><td class="n">€10.0m</td></tr>
+        <tr class="me"><td>The difference</td><td class="n">316,064</td><td class="n">€31.6m</td></tr>
+        <tr><td>Of which Aerodrome Capacity</td><td class="n">176,767</td><td class="n">€17.7m</td></tr>
+      </tbody>
+    </table></div>
+    <figcaption>Seven months. Across the whole of 2025, Schiphol carried 1,190,455 minutes,
+    which the same figure prices at roughly €119 million, of which Aerodrome Capacity alone
+    accounts for about €59 million.</figcaption>
+  </figure>
+  <div class="concede">
+    <p>EUROCONTROL publishes €100 per minute as the network average cost of an ATFM delay
+    minute, and states plainly that it is an indicative figure for general insight, not a
+    number for specific analysis or operational planning.</p>
+    <p>So treat the euro column as an order of magnitude, not an invoice. It says tens of
+    millions rather than hundreds of thousands, and that is the only claim I am making
+    with it.</p>
+  </div>
+  <p class="small">Source: EUROCONTROL Standard Inputs for Economic Analyses, release 10.0.2,
+  August 2026, section 16.1, itself drawn from the University of Westminster European airline
+  delay cost reference values, version 4.1.</p>
+</div></section>
+
+<!-- 09 -->
+<section class="page"><div class="folio">09</div><div class="inner">
+  <h2>What I would want to know</h2>
+  <div class="qns">
+    <div class="qn"><div class="i">1</div><p>How many hours a week is the declared arrival rate
+    set below the arrivals already scheduled for those hours?</p></div>
+    <div class="qn"><div class="i">2</div><p>When the rate is cut, how long before the schedule
+    is adjusted, and who tells the airlines?</p></div>
+  </div>
+  <div class="try">
+    <h3>What I would do first</h3>
+    <p class="sec">Put two numbers on the daily operations report: minutes of arrival
+    flow-management delay per landing this week, and the same week last year, each split into
+    weather and non-weather.</p>
+    <p class="sec">It needs no new system. It separates the part nobody controls from the part
+    somebody does, which is the argument this whole analysis had to work to reach.</p>
+    <p class="small" style="font-style:italic">A plan would need their data. This is public data
+    read from the outside.</p>
+  </div>
+</div></section>
+
+<!-- BIO -->
+<section class="page"><div class="inner"><footer>
+  <div class="nm">Gilroy Joseph</div>
+  <div class="rl">Hotels first, then EPC project control.</div>
+  <p>Four years controlling thirteen concurrent oil and gas projects: cost, schedule and
+  manpower against budget, scoring each project and flagging the ones going wrong early. The
+  method here is the same one, pointed at an airport instead.</p>
+  <p class="small"><a href="mailto:gilroybjoseph@gmail.com">gilroybjoseph@gmail.com</a> · <a href="https://www.linkedin.com/in/gilroy-joseph" target="_blank" rel="noopener">linkedin.com/in/gilroy-joseph</a></p>
+</footer></div></section>
+
+<!-- APPENDIX -->
+<section class="page"><div class="inner">
+  <h2>Everything, without the argument</h2>
+  <figure>
+    <h3>All ten airports · 2026, January to July</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Airport</th><th>Arrivals</th><th>Min / landing</th><th>% over 15 min</th></tr></thead>
+      <tbody>
+        <tr><td>Amsterdam Schiphol</td><td>137,318</td><td class="n">3.03</td><td>4.9%</td></tr>
+        <tr><td>Zürich</td><td>79,460</td><td class="n">2.54</td><td>5.9%</td></tr>
+        <tr><td>Copenhagen</td><td>78,171</td><td class="n">1.04</td><td>2.3%</td></tr>
+        <tr><td>London Heathrow</td><td>136,457</td><td class="n">0.99</td><td>2.3%</td></tr>
+        <tr><td>Paris CDG</td><td>137,876</td><td class="n">0.88</td><td>1.8%</td></tr>
+        <tr><td>Brussels</td><td>57,991</td><td class="n">0.73</td><td>1.4%</td></tr>
+        <tr><td>Frankfurt</td><td>126,082</td><td class="n">0.69</td><td>1.5%</td></tr>
+        <tr><td>Munich</td><td>88,489</td><td class="n">0.51</td><td>0.9%</td></tr>
+        <tr><td>Madrid</td><td>130,443</td><td class="n">0.40</td><td>0.9%</td></tr>
+        <tr><td>Rome Fiumicino</td><td>93,526</td><td class="n">0.06</td><td>0.1%</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+  <figure>
+    <h3>Non-weather delay, minutes per landing · 2026</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Airport</th><th>Non-weather</th></tr></thead>
+      <tbody>
+        <tr><td>Zürich</td><td class="n">1.735</td></tr>
+        <tr class="me"><td>Amsterdam Schiphol</td><td class="n">1.326</td></tr>
+        <tr><td>Brussels</td><td class="n">0.520</td></tr>
+        <tr><td>Paris CDG</td><td class="n">0.434</td></tr>
+        <tr><td>Copenhagen</td><td class="n">0.339</td></tr>
+        <tr><td>London Heathrow</td><td class="n">0.315</td></tr>
+        <tr><td>Madrid</td><td class="n">0.101</td></tr>
+        <tr><td>Munich</td><td class="n">0.059</td></tr>
+        <tr><td>Frankfurt</td><td class="n">0.050</td></tr>
+        <tr><td>Rome Fiumicino</td><td class="n">0.001</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+  <p class="small">Source: EUROCONTROL Performance Review Unit, Airport Arrival ATFM Delay
+  dataset (APT-DLY), sheet DATA. Downloaded 16 September 2026 from ansperformance.eu/data.
+  The workbook behind this page carries the full cause table, the metric definitions and the
+  monthly series.</p>
+</div></section>
+
+</div>
+
+<nav id="nav">
+  <button id="prev" aria-label="Previous page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+      stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+  </button>
+  <div id="count"><b>1</b> / 15</div>
+  <button id="next" aria-label="Next page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+      stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+  </button>
+</nav>
+
+<script>
+(function(){
+  var pages=[].slice.call(document.querySelectorAll('.page'));
+  var prev=document.getElementById('prev'), next=document.getElementById('next');
+  var count=document.getElementById('count'), total=pages.length, i=0;
+  function show(n,push){
+    n=Math.max(0,Math.min(total-1,n));
+    if(pages[i]) pages[i].classList.remove('on');
+    i=n; pages[i].classList.add('on'); pages[i].scrollTop=0;
+    count.innerHTML='<b>'+(i+1)+'</b> / '+total;
+    count.className=(i<2)?'hide':'';
+    prev.disabled=(i===0); next.disabled=(i===total-1);
+    if(push!==false){ try{history.replaceState(null,'','#'+(i+1));}catch(e){} }
+  }
+  prev.addEventListener('click',function(){show(i-1);});
+  next.addEventListener('click',function(){show(i+1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){show(i+1);e.preventDefault();}
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){show(i-1);e.preventDefault();}
+    if(e.key==='Home'){show(0);e.preventDefault();}
+    if(e.key==='End'){show(total-1);e.preventDefault();}
+  });
+  var x0=null,y0=null;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length!==1){x0=null;return;}
+    x0=e.touches[0].clientX; y0=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(x0===null)return; var t=e.changedTouches[0];
+    var dx=t.clientX-x0, dy=t.clientY-y0;
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.8){show(dx<0?i+1:i-1);} x0=null;},{passive:true});
+  var s=parseInt((location.hash||'').replace('#',''),10);
+  show(isNaN(s)?0:s-1,false);
+})();
+</script>
+</body>
+</html>
