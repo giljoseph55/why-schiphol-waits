@@ -1,5 +1,11 @@
 # Why Schiphol waits
 
+**Question:** Is Schiphol's arrival delay just weather, or does something else separate it from nine comparable European hubs?
+
+**Finding:** Schiphol averages 3.03 minutes of arrival delay per landing against a peer median of 0.73. Its largest non-weather gap is Aerodrome Capacity (1.287 vs 0.112), highest in 6 of 8 years, so weather alone does not explain it.
+
+**So what:** At EUROCONTROL's indicative €100 per minute, the gap to the peer median is roughly €31.6m over Jan–Jul 2026, an order of magnitude and not an invoice.
+
 Arrival flow-management delay at Amsterdam Schiphol, measured against nine comparable
 European hub airports, from 1,033,177 daily airport records published by EUROCONTROL.
 
